@@ -61,7 +61,7 @@ function Form() {
               default:
                 break;
             }
-          });
+          },[segment]);
     
           if (segment.isFinal && formData.amount && formData.category && formData.type && formData.date) {
             createTransaction();
