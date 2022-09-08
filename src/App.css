@@ -11,3 +11,7 @@
 .main{
   width: 30%;
 } */
+
+.app{
+  box-sizing: border-box;
+}

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react'
+import React, {useState, useEffect, useContext, useCallback} from 'react'
 import {TextField, Grid, FormControl, MenuItem, Select, Typography, InputLabel, Button} from '@mui/material'
 import { BudgetTrackerContext } from '../../Context/Context'
 import {v4 as uuidv4}from 'uuid'
@@ -8,27 +8,32 @@ import PopupSnackbar from '../../Snackbar/Snackbar'
 
 function Form() {
     
-    const initialState={
-        amount:"",
-        category:"",
-        type:"",
-        date: ""
-    }
-    const [formData, setFormData] = useState(initialState)
+
+    const [formData, setFormData] = useState({
+      amount:"",
+      category:"",
+      type:"",
+      date: ""
+  })
     const [open, setOpen] = useState(false)
 
     const {addTransaction} = useContext(BudgetTrackerContext)
 
     const {segment} = useSpeechContext()
 
-    const createTransaction = () =>{
-        
-    if (Number.isNaN(Number(formData.amount)) || !formData.date.includes('-')) return;
-        const transaction = {...formData, amount:Number(formData.amount), id:uuidv4()}
-        addTransaction(transaction)
-        setFormData(initialState)
-        setOpen(true)
-    }
+    const createTransaction = useCallback(() =>{
+      if (Number.isNaN(Number(formData.amount)) || !formData.date.includes('-')) return;
+          const transaction = {...formData, amount:Number(formData.amount), id:uuidv4()}
+          addTransaction(transaction)
+          setFormData({
+            amount:"",
+            category:"",
+            type:"",
+            date: ""
+        })
+          setOpen(true)
+      }, [formData, addTransaction])
+
     useEffect(() => {
         if (segment) {
           if (segment.intent.intent === 'add_expense') {
@@ -38,7 +43,12 @@ function Form() {
           } else if (segment.isFinal && segment.intent.intent === 'create_transaction') {
             return createTransaction();
           } else if (segment.isFinal && segment.intent.intent === 'cancel_transaction') {
-            return setFormData(initialState);
+            return setFormData({
+              amount:"",
+              category:"",
+              type:"",
+              date: ""
+          });
           }
     
           segment.entities.forEach((s) => {
@@ -61,13 +71,15 @@ function Form() {
               default:
                 break;
             }
-          },[segment]);
+          });
     
           if (segment.isFinal && formData.amount && formData.category && formData.type && formData.date) {
             createTransaction();
           }
         }
-      }, [segment]);
+      }, [segment, createTransaction, formData]);
+
+
     const selectedCategories = formData.type === 'Income' ? incomeCategories : formData.type === 'Expense' ? expenseCategories : []
 
     console.log('word', segment?.words);

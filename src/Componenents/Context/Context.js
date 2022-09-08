@@ -5,7 +5,7 @@ const initialState = JSON.parse(localStorage.getItem('transactions')) || []
 
 export const BudgetTrackerContext = createContext(initialState)
 
-export const Provider = ({children}) => {
+export const Providers = ({children}) => {
 const [transactions, dispatch] = useReducer(contextReducer, initialState)
 console.log('transaction', transactions);
 

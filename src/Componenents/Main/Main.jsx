@@ -9,6 +9,7 @@ function Main() {
 
   return (
     <div>
+    
         <Card sx={{height:'60%'}}>
             <CardHeader title='Budget Tracker'/>
             <CardContent>

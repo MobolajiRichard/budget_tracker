@@ -1,36 +1,19 @@
 import './App.css';
-import Details from './Componenents/Details/Details';
-import Main from './Componenents/Main/Main';
-import {PushToTalkButton, PushToTalkButtonContainer} from "@speechly/react-ui"
-import {Grid} from '@mui/material'
+import Homepage from './Componenents/Homepage/Homepage';
+import MainPage from './Mainpage/MainPage';
+import { useSelector } from 'react-redux';
+import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom'
 
 function App() {
-
-  // const func = () =>{
-  //   var context = new AudioContext()
-
-  //   context.resume().then(()=>{
-  //     console.log('playback resumed');
-  //   })
-  // }
+  const user = useSelector((state) => state.user.currentUser);
   return (
     <div className="app">
-      <Grid   container spacing={2}
-      sx={{height: '100%',  padding: '1%', boxSizing: 'border-box', placeItems:'center'}}
-      >
-        <Grid sx={{height:'40%'}} item xs={12} sm={4}>
-        <Details color='green' title='Income'/>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Main/>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-        <Details color='red' title='Expense'/>
-        </Grid>
-      </Grid>
-      <PushToTalkButtonContainer>
-        <PushToTalkButton/>
-      </PushToTalkButtonContainer>
+      <BrowserRouter>
+      <Routes>
+        <Route path='/' element={user ? <MainPage/> : <Navigate to='/login' replace/>}/>
+        <Route path='/login' element={user? <Navigate to='/' replace/> : <Homepage/>}/>
+      </Routes>
+      </BrowserRouter>
     </div>
   );
 }
